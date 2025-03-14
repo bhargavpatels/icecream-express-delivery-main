@@ -15,6 +15,7 @@ export interface OrderItem {
   product?: {
     name: string;
     image: string;
+    cover?: string;
   };
 }
 
@@ -82,13 +83,22 @@ export const enrichOrderItemsWithProductData = async (
       orderItems.map(async (item) => {
         const product = findProductByNameAndSize(products, item.name, item.size);
         
+        // Get the appropriate image based on size
+        const getProductImage = () => {
+          if (item.size === '750 ML' && product?.cover) {
+            return product.cover;
+          }
+          return product?.image || item.image || "/placeholder.svg";
+        };
+        
         return {
           ...item,
-          image: product?.image || item.image || "/placeholder.svg",
+          image: getProductImage(),
           product: product
             ? {
                 name: product.name,
                 image: product.image,
+                cover: product.cover
               }
             : undefined,
         };
@@ -101,13 +111,22 @@ export const enrichOrderItemsWithProductData = async (
     return orderItems.map((item) => {
       const product = findProductByNameAndSize(fallbackProducts, item.name, item.size);
       
+      // Get the appropriate image based on size
+      const getProductImage = () => {
+        if (item.size === '750 ML' && product?.cover) {
+          return product.cover;
+        }
+        return product?.image || item.image || "/placeholder.svg";
+      };
+      
       return {
         ...item,
-        image: product?.image || item.image || "/placeholder.svg",
+        image: getProductImage(),
         product: product
           ? {
               name: product.name,
               image: product.image,
+              cover: product.cover
             }
           : undefined,
       };

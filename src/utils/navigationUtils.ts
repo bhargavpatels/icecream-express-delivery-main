@@ -16,8 +16,10 @@ export const navigateBack = (
   fallbackPath: string = '/'
 ): void => {
   try {
-    // For settings pages, always return to profile page
-    if (window.location.pathname.includes('/settings/')) {
+    // For settings pages and legal pages, always return to profile page
+    if (window.location.pathname.includes('/settings/') || 
+        window.location.pathname === '/privacy-policy' ||
+        window.location.pathname === '/terms') {
       navigate('/profile', { replace: true });
     } 
     // For other pages, try to go back in history

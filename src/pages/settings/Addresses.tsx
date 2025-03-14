@@ -1,9 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Plus, Edit, Trash } from 'lucide-react';
+import { ArrowLeft, MapPin, Plus } from 'lucide-react';
 import { toast } from "sonner";
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import AddressCard from '@/components/AddressCard';
 import { useUser } from '@/hooks/useUser';
 import { navigateBack } from '@/utils/navigationUtils';
 
@@ -57,34 +58,12 @@ const Addresses = () => {
             {user?.addresses && user.addresses.length > 0 ? (
               <div className="divide-y divide-gray-100">
                 {user.addresses.map((address) => (
-                  <div key={address.id} className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start">
-                        <MapPin size={20} className="text-brand-pink mt-1 mr-3 flex-shrink-0" />
-                        <div>
-                          <p className="font-medium">Address</p>
-                          <p className="text-gray-600 text-sm mt-1">{address.address}</p>
-                          <p className="text-gray-600 text-sm">{address.city}, {address.pincode}</p>
-                          {address.isDefault && <p className="text-brand-pink text-sm mt-1">Default Address</p>}
-                        </div>
-                      </div>
-                      
-                      <div className="flex space-x-2">
-                        <button
-                          onClick={() => handleEditAddress(address.id)}
-                          className="p-2 text-gray-500 hover:text-brand-pink"
-                        >
-                          <Edit size={18} />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteAddress(address.id)}
-                          className="p-2 text-gray-500 hover:text-red-500"
-                        >
-                          <Trash size={18} />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                  <AddressCard 
+                    key={address.id}
+                    address={address}
+                    onEdit={handleEditAddress}
+                    onDelete={handleDeleteAddress}
+                  />
                 ))}
               </div>
             ) : (

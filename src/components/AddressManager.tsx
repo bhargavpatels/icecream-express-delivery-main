@@ -64,7 +64,7 @@ const AddressManager: React.FC<AddressManagerProps> = ({
   }, [isAddressModalOpen]);
   
   // Load addresses
-  const loadAddresses = () => {
+  const loadAddresses = async () => {
     const savedAddresses = getSavedAddresses();
     setAddresses(savedAddresses);
     
@@ -262,12 +262,13 @@ const AddressManager: React.FC<AddressManagerProps> = ({
                 <div className="flex-grow">
                   <div className="flex justify-between">
                     <div>
-                      <p className="font-medium text-gray-800">{index + 1}</p>
+                      <p className="font-medium text-gray-800">Address</p>
+                      <p className="text-gray-600 text-sm mt-1">{address.streetAddress}</p>
                       <p className="text-gray-600 text-sm">{address.city || 'Rajkot'}, {address.pinCode}</p>
                     </div>
                     
                     {address.isDefault && (
-                      <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded self-start ml-2">
+                      <span className="px-2 py-0.5 bg-green-100 text-green-800 text-xs rounded-full">
                         Default
                       </span>
                     )}
@@ -276,20 +277,24 @@ const AddressManager: React.FC<AddressManagerProps> = ({
                   <div className="flex mt-2 space-x-3 text-xs">
                     <button
                       onClick={() => handleEdit(address)}
-                      className="text-gray-500 hover:text-gray-700 flex items-center"
+                      className="text-gray-500 hover:text-brand-pink flex items-center transition-colors"
+                      type="button"
                     >
                       <Edit2 size={12} className="mr-1" /> Edit
                     </button>
                     <button
                       onClick={() => handleDeleteAddress(address.id)}
-                      className="text-gray-500 hover:text-gray-700 flex items-center"
+                      className="text-gray-500 hover:text-red-500 flex items-center transition-colors"
+                      type="button"
+                      disabled={address.isDefault}
                     >
-                      <Trash2 size={12} className="mr-1" /> Delete
+                      <Trash2 size={12} className={`mr-1 ${address.isDefault ? "opacity-50" : ""}`} /> Delete
                     </button>
                     {!address.isDefault && (
                       <button
                         onClick={() => handleSetDefault(address.id)}
-                        className="text-gray-500 hover:text-gray-700 flex items-center"
+                        className="text-gray-500 hover:text-green-600 flex items-center transition-colors"
+                        type="button"
                       >
                         <CheckCircle size={12} className="mr-1" /> Set as Default
                       </button>

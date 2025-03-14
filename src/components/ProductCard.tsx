@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useCart } from '@/context/CartContext';
 import { Product } from '@/types/product';
@@ -49,12 +48,22 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     }
   };
 
+  // Get the appropriate image based on size
+  const getProductImage = () => {
+    // If selected size is 750ml and product has a cover image, use it
+    if (selectedSize.size === '750 ML' && product.cover) {
+      return getImageUrl(product.cover);
+    }
+    // Otherwise use the default product image
+    return getImageUrl(product.image);
+  };
+
   return (
     <div className="bg-white rounded-xl overflow-hidden product-shadow animate-fade-in">
       <div className="relative group">
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         <img 
-          src={getImageUrl(product.image)} 
+          src={getProductImage()} 
           alt={product.name} 
           className="w-full aspect-square object-contain p-4"
           onError={(e) => {

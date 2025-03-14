@@ -22,6 +22,8 @@ import Addresses from "./pages/settings/Addresses";
 import AddAddress from "./pages/settings/AddAddress";
 import EditAddress from "./pages/settings/EditAddress";
 import DeleteAccount from "./pages/settings/DeleteAccount";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsConditions from "./pages/TermsConditions";
 
 // Configure React Query client with reasonable defaults
 const queryClient = new QueryClient({
@@ -63,6 +65,10 @@ const App = () => (
               <Route path="/settings/addresses/add" element={<AddAddress />} />
               <Route path="/settings/addresses/edit/:addressId" element={<EditAddress />} />
               <Route path="/settings/delete-account" element={<DeleteAccount />} />
+              
+              {/* Legal Routes */}
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<TermsConditions />} />
               
               <Route path="*" element={<NotFound />} />
             </Routes>

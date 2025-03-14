@@ -1,6 +1,5 @@
-
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { placeOrder, fetchOrderHistory, trackOrder, OrderRequest } from '@/services/api';
+import { placeOrder, fetchOrderHistory, trackOrder, cancelOrder, OrderRequest } from '@/services/api';
 import { useToast } from '@/components/ui/use-toast';
 
 export const usePlaceOrder = () => {
@@ -39,5 +38,27 @@ export const useTrackOrder = (orderId: string) => {
     queryFn: () => trackOrder(orderId),
     enabled: !!orderId, // Only run query if orderId is provided
     refetchInterval: 30000, // Refetch every 30 seconds to get updates
+  });
+};
+
+export const useCancelOrder = () => {
+  const { toast } = useToast();
+  
+  return useMutation({
+    mutationFn: (orderId: string) => cancelOrder(orderId),
+    onSuccess: () => {
+      toast({
+        title: "Order Cancelled Successfully!",
+        description: "Your order has been cancelled.",
+        variant: "default",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Failed to cancel order",
+        description: error.message || "Please try again later",
+        variant: "destructive",
+      });
+    },
   });
 };

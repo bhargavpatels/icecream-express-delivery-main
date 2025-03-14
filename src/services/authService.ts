@@ -35,14 +35,6 @@ export const testApiConnection = async (): Promise<boolean> => {
  */
 export const loginUser = async (identifier: string, password: string): Promise<User | null> => {
   try {
-    // Test API connection first
-    const isConnected = await testApiConnection();
-    if (!isConnected) {
-      console.error('Cannot connect to API server');
-      toast.error('Cannot connect to server. Please check your internet connection.');
-      return null;
-    }
-    
     // Create form data for the API request
     const formData = new FormData();
     
@@ -59,68 +51,57 @@ export const loginUser = async (identifier: string, password: string): Promise<U
     
     console.log(`Attempting to login with ${isPhone ? 'phone' : 'email'}: ${identifier}`);
     
-    // Construct the full URL
-    const loginUrl = `${ApiUrls.baseUrl}${ApiUrls.apiPath}${ApiUrls.login}`;
-    console.log('Login URL:', loginUrl);
-    
-    // Try alternative approach with XMLHttpRequest instead of fetch
-    return new Promise((resolve) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', loginUrl, true);
-      
-      xhr.onload = function() {
-        console.log('XHR Status:', xhr.status);
-        console.log('XHR Response:', xhr.responseText);
-        
-        if (xhr.status >= 200 && xhr.status < 300) {
-          try {
-            const data = JSON.parse(xhr.responseText);
-            console.log('Login response data:', data);
-            
-            if (data.status === 'success' && data.data) {
-              // Extract user data from the response
-              const userData: User = {
-                id: data.data.id || Date.now().toString(),
-                name: data.data.name || 'User',
-                email: data.data.email || identifier,
-                phone: data.data.phone || '',
-                addresses: data.data.addresses || []
-              };
-              
-              // Store auth token if available
-              if (data.data.token) {
-                localStorage.setItem('auth_token', data.data.token);
-              }
-              
-              toast.success(data.message || "Login successful!");
-              resolve(userData);
-            } else {
-              toast.error(data.message || "Invalid credentials");
-              resolve(null);
-            }
-          } catch (error) {
-            console.error('Error parsing response:', error);
-            toast.error("Error processing server response");
-            resolve(null);
-          }
-        } else {
-          console.error('Login failed with status:', xhr.status);
-          toast.error("Login failed. Please check your credentials and try again.");
-          resolve(null);
-        }
-      };
-      
-      xhr.onerror = function() {
-        console.error('XHR Error:', xhr.statusText);
-        toast.error("Network error. Please check your connection.");
-        resolve(null);
-      };
-      
-      xhr.send(formData);
+    // Use the proxy for the login request
+    const response = await fetch('/api/Login.php', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        // Don't set Content-Type header when using FormData
+        // The browser will set it automatically with the correct boundary
+      },
+      body: formData
     });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ message: `Error ${response.status}` }));
+      throw new Error(errorData.message || `API error: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log('Login response data:', data);
+    
+    if (data.status === 'success' && data.data) {
+      // Extract user data from the response
+      const userData: User = {
+        id: data.data.id || Date.now().toString(),
+        name: data.data.name || 'User',
+        email: data.data.email || identifier,
+        phone: data.data.phone || '',
+        addresses: data.data.addresses || []
+      };
+      
+      // Store auth token if available
+      if (data.data.token) {
+        localStorage.setItem('auth_token', data.data.token);
+      }
+      
+      toast.success(data.message || "Login successful!");
+      return userData;
+    } else {
+      toast.error(data.message || "Invalid credentials");
+      return null;
+    }
   } catch (error) {
     console.error("Login error:", error);
-    toast.error(error instanceof Error ? error.message : "Login failed. Please try again.");
+    if (error instanceof Error) {
+      if (error.message.includes('Failed to fetch')) {
+        toast.error("Unable to connect to the server. Please check your internet connection.");
+      } else {
+        toast.error(error.message);
+      }
+    } else {
+      toast.error("Login failed. Please try again.");
+    }
     return null;
   }
 };
@@ -146,65 +127,40 @@ export const registerUser = async (name: string, email: string, phone: string, p
     
     console.log('Attempting to register user:', { name, email, phone });
     
-    // Construct the full URL
-    const signUpUrl = `${ApiUrls.baseUrl}${ApiUrls.apiPath}${ApiUrls.signUp}`;
-    console.log('SignUp URL:', signUpUrl);
-    
-    // Try alternative approach with XMLHttpRequest instead of fetch
-    return new Promise((resolve) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', signUpUrl, true);
-      
-      xhr.onload = function() {
-        console.log('XHR Status:', xhr.status);
-        console.log('XHR Response:', xhr.responseText);
-        
-        if (xhr.status >= 200 && xhr.status < 300) {
-          try {
-            const data = JSON.parse(xhr.responseText);
-            console.log('Registration response data:', data);
-            
-            if (data.status === 'success' && data.data) {
-              // Extract user data from the response
-              const userData: User = {
-                id: data.data.id || Date.now().toString(),
-                name: data.data.name || name,
-                email: data.data.email || email,
-                phone: data.data.phone || phone,
-                addresses: data.data.addresses || []
-              };
-              
-              // Store auth token if available
-              if (data.data.token) {
-                localStorage.setItem('auth_token', data.data.token);
-              }
-              
-              toast.success(data.message || "Registration successful!");
-              resolve(userData);
-            } else {
-              toast.error(data.message || "Registration failed");
-              resolve(null);
-            }
-          } catch (error) {
-            console.error('Error parsing response:', error);
-            toast.error("Error processing server response");
-            resolve(null);
-          }
-        } else {
-          console.error('Registration failed with status:', xhr.status);
-          toast.error("Registration failed. Please try again later.");
-          resolve(null);
-        }
-      };
-      
-      xhr.onerror = function() {
-        console.error('XHR Error:', xhr.statusText);
-        toast.error("Network error. Please check your connection.");
-        resolve(null);
-      };
-      
-      xhr.send(formData);
+    // Use the proxy for the registration request
+    const response = await fetch('/api/SignUp.php', {
+      method: 'POST',
+      body: formData
     });
+    
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log('Registration response data:', data);
+    
+    if (data.status === 'success' && data.data) {
+      // Extract user data from the response
+      const userData: User = {
+        id: data.data.id || Date.now().toString(),
+        name: data.data.name || name,
+        email: data.data.email || email,
+        phone: data.data.phone || phone,
+        addresses: data.data.addresses || []
+      };
+      
+      // Store auth token if available
+      if (data.data.token) {
+        localStorage.setItem('auth_token', data.data.token);
+      }
+      
+      toast.success(data.message || "Registration successful!");
+      return userData;
+    } else {
+      toast.error(data.message || "Registration failed");
+      return null;
+    }
   } catch (error) {
     console.error("Registration error:", error);
     toast.error(error instanceof Error ? error.message : "Registration failed. Please try again.");

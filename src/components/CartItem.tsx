@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { X } from 'lucide-react';
 import { CartItem as CartItemType } from '@/context/CartContext';
@@ -31,11 +30,21 @@ const CartItem: React.FC<CartItemProps> = ({
   const priceToUse = isWholesale && isEligibleForWholesale ? selectedSize.price : (selectedSize.mrp || selectedSize.price);
   const totalPrice = priceToUse * quantity;
 
+  // Get the appropriate image based on size
+  const getProductImage = () => {
+    // If selected size is 750ml and product has a cover image, use it
+    if (selectedSize.size === '750 ML' && product.cover) {
+      return product.cover;
+    }
+    // Otherwise use the default product image
+    return product.image;
+  };
+
   if (view === 'compact') {
     return (
       <div className="flex items-center py-2 border-b border-gray-100 last:border-0 animate-fade-in">
         <img 
-          src={product.image} 
+          src={getProductImage()} 
           alt={product.name} 
           className="w-12 h-12 object-contain mr-3"
         />
@@ -56,7 +65,7 @@ const CartItem: React.FC<CartItemProps> = ({
     <div className="flex flex-col sm:flex-row items-start sm:items-center py-4 border-b border-gray-200 last:border-0 animate-fade-in">
       <div className="flex items-center sm:w-1/2 mb-3 sm:mb-0">
         <img 
-          src={product.image} 
+          src={getProductImage()} 
           alt={product.name} 
           className="w-16 h-16 sm:w-20 sm:h-20 object-contain mr-3 sm:mr-4"
         />

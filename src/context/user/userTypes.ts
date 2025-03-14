@@ -1,4 +1,3 @@
-
 import { User, UserAddress } from '../../types/user';
 
 // User state definition

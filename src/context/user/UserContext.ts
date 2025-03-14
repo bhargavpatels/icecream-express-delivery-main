@@ -1,4 +1,3 @@
-
 import { createContext } from 'react';
 import { UserContextType } from './userTypes';
 

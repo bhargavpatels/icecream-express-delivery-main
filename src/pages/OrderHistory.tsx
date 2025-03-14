@@ -6,6 +6,8 @@ import Footer from '@/components/Footer';
 import { Image } from '@/components/ui/image';
 import { enrichOrderItemsWithProductData, OrderItem } from '@/services/orderService';
 import { getOrders, StoredOrder } from '@/utils/orderStorage';
+import { useOrderHistory, useCancelOrder } from '@/hooks/useOrders';
+// import { useAuth } from '@/context/AuthContext'; // Removing since module not found
 
 // Mock data for order history
 // This is sample data used for development and testing purposes
@@ -49,7 +51,7 @@ const initialOrders = [
   {
     id: 'ORD123455',
     date: 'July 16, 2024 03:36',
-    status: 'completed',
+    status: 'completed',  
     total: 910,
     address: '512, Mindwave Infoway, Shivalay Complex, Mavdi Road, Rajkot',
     items: [
@@ -228,6 +230,27 @@ interface OrderCardProps {
 
 const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
   const [isExpanded, setIsExpanded] = React.useState(false);
+  const { mutate: cancelOrder, isPending: isCancelling } = useCancelOrder();
+  const { refetch } = useOrderHistory(''); // Using empty string since we don't have user phone
+  
+  // Get the appropriate image based on size
+  const getProductImage = (item: OrderItem) => {
+    // If item is 750ml and has a cover image, use it
+    if (item.size === '750 ML' && item.product?.cover) {
+      return item.product.cover;
+    }
+    // Otherwise use the default product image
+    return item.product?.image || item.image;
+  };
+
+  const handleCancelOrder = async () => {
+    try {
+      await cancelOrder(order.id);
+      refetch(); // Refresh the order list after cancellation
+    } catch (error) {
+      console.error('Error cancelling order:', error);
+    }
+  };
   
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden animate-fade-in">
@@ -235,22 +258,9 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
           <div>
             <span className="text-sm text-gray-500">Order ID: {order.id}</span>
-            <div className="mt-1 font-medium">{order.date}</div>
+            <h2 className="text-lg font-semibold mt-1">{order.date}</h2>
           </div>
-          
-          <div className="mt-3 sm:mt-0 flex items-center">
-            <span className="font-bold text-xl mr-3">₹ {order.total}</span>
-            <StatusBadge status={order.status} />
-          </div>
-        </div>
-        
-        <div className="flex items-start">
-          <div className="mr-2 mt-1 text-brand-pink">
-            <Clock size={16} />
-          </div>
-          <div className="text-sm text-gray-600">
-            <p>{order.address}</p>
-          </div>
+          <StatusBadge status={order.status} />
         </div>
         
         <div className="mt-4 flex justify-between items-center">
@@ -259,7 +269,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
               {order.items.slice(0, 3).map((item, index) => (
                 <div key={item.id} className="h-10 w-10 rounded-full border-2 border-white overflow-hidden">
                   <Image 
-                    src={item.product?.image || item.image} 
+                    src={getProductImage(item)} 
                     alt={item.product?.name || item.name} 
                     className="h-full w-full object-cover" 
                   />
@@ -294,7 +304,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
             {order.items.map((item) => (
               <div key={item.id} className="flex items-center">
                 <Image 
-                  src={item.product?.image || item.image} 
+                  src={getProductImage(item)} 
                   alt={item.product?.name || item.name} 
                   className="h-16 w-16 object-cover rounded-md mr-4" 
                 />
@@ -327,8 +337,12 @@ const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
           
           {order.status === 'pending' && (
             <div className="mt-6">
-              <button className="w-full py-2 border border-red-500 text-red-500 rounded-lg font-medium hover:bg-red-50 transition-colors">
-                Cancel Order
+              <button 
+                onClick={handleCancelOrder}
+                disabled={isCancelling}
+                className="w-full py-2 border border-red-500 text-red-500 rounded-lg font-medium hover:bg-red-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isCancelling ? 'Cancelling...' : 'Cancel Order'}
               </button>
             </div>
           )}

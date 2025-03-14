@@ -13,9 +13,11 @@ import { fetchPinCodes } from '@/services/pinCodeService';
 import { Address } from '@/types/address';
 import { getDefaultAddress } from '@/services/addressService';
 import { AppStrings } from '@/config/api-config';
+import { useUser } from '@/hooks/useUser';
 
 const Cart = () => {
   const { cartItems, increaseQuantity, decreaseQuantity, removeFromCart, totalAmount, totalVolume, totalCountItems, isWholesale, clearCart } = useCart();
+  const { isAuthenticated } = useUser();
   const [address, setAddress] = useState("");
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
@@ -173,6 +175,12 @@ const Cart = () => {
   };
 
   const handlePlaceOrder = () => {
+    if (!isAuthenticated) {
+      toast.info("Please login to place your order");
+      navigate('/login', { state: { from: '/cart' } });
+      return;
+    }
+
     if (cartItems.length === 0) {
       toast.error("Your cart is empty!");
       return;
@@ -245,6 +253,10 @@ const Cart = () => {
         toast.error("Please select a pin code");
       }
     }
+  };
+
+  const clearCartItems = () => {
+    clearCart();
   };
 
   return (
@@ -360,6 +372,12 @@ const Cart = () => {
                   >
                     <ShoppingBag size={18} className="mr-2" />
                     Place Order
+                  </button>
+                  <button
+                    onClick={clearCartItems}
+                    className="w-full py-3 bg-red-500 text-white rounded-lg font-medium hover:bg-opacity-90 transition-colors flex items-center justify-center mt-4"
+                  >
+                    Clear Cart
                   </button>
                 </div>
               </div>

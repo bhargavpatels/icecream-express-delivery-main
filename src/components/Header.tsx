@@ -47,7 +47,7 @@ const Header: React.FC = () => {
           <nav className="hidden md:flex items-center space-x-8">
             <NavLink to="/" icon={<Home size={18} />}>Home</NavLink>
             <NavLink to="/products" icon={<Search size={18} />}>Products</NavLink>
-            <NavLink to="/order-history" icon={<History size={18} />}>Orders</NavLink>
+              <NavLink to="/order-history" icon={<History size={18} />}>Orders</NavLink>
             
             {isAuthenticated ? (
               <NavLink to="/profile" icon={<User size={18} />}>
@@ -105,7 +105,9 @@ const Header: React.FC = () => {
           <nav className="flex flex-col py-4">
             <MobileNavLink to="/" icon={<Home size={18} />}>Home</MobileNavLink>
             <MobileNavLink to="/products" icon={<Search size={18} />}>Products</MobileNavLink>
-            <MobileNavLink to="/order-history" icon={<History size={18} />}>Orders</MobileNavLink>
+            {isAuthenticated && (
+              <MobileNavLink to="/order-history" icon={<History size={18} />}>Orders</MobileNavLink>
+            )}
             {isAuthenticated ? (
               <MobileNavLink to="/profile" icon={<User size={18} />}>Profile</MobileNavLink>
             ) : (
