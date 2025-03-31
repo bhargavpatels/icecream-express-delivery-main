@@ -298,46 +298,43 @@ const Cart = () => {
                 <div className="bg-white rounded-xl shadow-sm p-6 mb-6 sticky top-24">
                   <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
                   
-                  {/* Volume Information */}
-                  <div className="flex items-center mb-4 p-3 bg-blue-50 rounded-lg text-sm">
-                    <Info size={16} className="text-blue-500 mr-2 flex-shrink-0" />
-                    <div>
-                      <div className="font-medium mb-1">Order Details</div>
-                      
-                      {totalVolume > 0 && (
-                        <>
-                          <div className="font-medium text-xs mb-1 mt-2 text-blue-700">Ice Cream Products</div>
-                          <div className="flex flex-col space-y-1 border-l-2 border-blue-200 pl-2">
-                            <div className="flex justify-between">
-                              <span>Total Volume:</span>
-                              <span>{totalVolume.toFixed(1)} liters</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span>5L Products:</span>
-                              <span>{fiveLiterVolume.toFixed(1)} liters</span>
-                            </div>
-                            {isWholesale && (
-                              <p className="text-green-600 mt-1 text-xs">✓ Wholesale pricing applied (10+ liters)</p>
-                            )}
-                            {!isWholesale && fiveLiterVolume > 0 && (
-                              <p className="mt-1 text-xs">Add {(10 - fiveLiterVolume).toFixed(1)} more liters for wholesale prices</p>
-                            )}
+                  {/* Details Section with clear separation */}
+                  <div className="mb-4">
+                    <div className="font-medium mb-3">Order Details</div>
+                    
+                    {/* Ice Cream Products Section */}
+                    {totalVolume > 0 && (
+                      <div className="p-3 bg-blue-50 rounded-lg text-sm mb-3">
+                        <div className="font-medium text-blue-700 mb-2">Ice Cream Products</div>
+                        <div className="flex flex-col space-y-2">
+                          <div className="flex justify-between">
+                            <span>Total Volume:</span>
+                            <span>{totalVolume.toFixed(1)} liters</span>
                           </div>
-                        </>
-                      )}
-                      
-                      {totalCountItems > 0 && (
-                        <>
-                          <div className="font-medium text-xs mb-1 mt-3 text-orange-700">Cone & Candy Products</div>
-                          <div className="flex flex-col space-y-1 border-l-2 border-orange-200 pl-2">
-                            <div className="flex justify-between">
-                              <span>Total Quantity:</span>
-                              <span>{totalCountItems} pcs</span>
-                            </div>
+                          <div className="flex justify-between">
+                            <span>5L Products:</span>
+                            <span>{fiveLiterVolume.toFixed(1)} liters</span>
                           </div>
-                        </>
-                      )}
-                    </div>
+                          {isWholesale && (
+                            <p className="text-green-600 mt-1 text-xs">✓ Wholesale pricing applied (10+ liters)</p>
+                          )}
+                          {!isWholesale && fiveLiterVolume > 0 && (
+                            <p className="mt-1 text-xs">Add {(10 - fiveLiterVolume).toFixed(1)} more liters for wholesale prices</p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Cone & Candy Products Section */}
+                    {totalCountItems > 0 && (
+                      <div className="p-3 bg-orange-50 rounded-lg text-sm">
+                        <div className="font-medium text-orange-700 mb-2">Cone & Candy Products</div>
+                        <div className="flex justify-between">
+                          <span>Total Quantity:</span>
+                          <span>{totalCountItems} pcs</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   
                   <div className="space-y-3 mb-6">

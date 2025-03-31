@@ -36,7 +36,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Helper function to check if a product is a count-based item
   const isCountProduct = (category: string): boolean => {
-    return ['cone', 'candy', 'stick', 'cup'].includes(category.toLowerCase());
+    return ['cone', 'candy', 'stick', 'cup', 'ConeCandy'].includes(category.toLowerCase() === 'conecandy' ? category : category.toLowerCase());
   };
 
   useEffect(() => {
