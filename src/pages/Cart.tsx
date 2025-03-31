@@ -32,6 +32,11 @@ const Cart = () => {
   const [mobileError, setMobileError] = useState("");
   const navigate = useNavigate();
 
+  // Helper function to check if a product is a count-based item
+  const isCountProduct = (category: string): boolean => {
+    return ['cone', 'candy', 'stick', 'cup', 'ConeCandy'].includes(category.toLowerCase() === 'conecandy' ? category : category.toLowerCase());
+  };
+
   // Calculate volume of 5L products only - these are eligible for wholesale
   const fiveLiterVolume = cartItems.reduce((total, item) => {
     const sizeNum = parseFloat(item.selectedSize.size);
@@ -306,8 +311,22 @@ const Cart = () => {
                     {totalVolume > 0 && (
                       <div className="p-3 bg-blue-50 rounded-lg text-sm mb-3">
                         <div className="font-medium text-blue-700 mb-2">Ice Cream Products</div>
-                        <div className="flex flex-col space-y-2">
-                          <div className="flex justify-between">
+                        <div className="flex flex-col space-y-1">
+                          {/* Itemized breakdown of ice cream products */}
+                          {cartItems
+                            .filter(item => !isCountProduct(item.product.category))
+                            .map((item, index) => (
+                              <div key={index} className="flex justify-between border-b border-blue-100 last:border-b-0 py-1">
+                                <span className="font-medium">{item.product.name}:</span>
+                                <span>
+                                  {item.quantity} × {item.selectedSize.size} 
+                                  {item.selectedSize.size.toLowerCase().includes('ml') ? '' : ' L'}
+                                </span>
+                              </div>
+                            ))}
+                            
+                          {/* Summary of ice cream volumes */}
+                          <div className="flex justify-between mt-2 pt-1 border-t border-blue-200">
                             <span>Total Volume:</span>
                             <span>{totalVolume.toFixed(1)} liters</span>
                           </div>
@@ -315,6 +334,8 @@ const Cart = () => {
                             <span>5L Products:</span>
                             <span>{fiveLiterVolume.toFixed(1)} liters</span>
                           </div>
+                          
+                          {/* Wholesale information */}
                           {isWholesale && (
                             <p className="text-green-600 mt-1 text-xs">✓ Wholesale pricing applied (10+ liters)</p>
                           )}
@@ -329,30 +350,55 @@ const Cart = () => {
                     {totalCountItems > 0 && (
                       <div className="p-3 bg-orange-50 rounded-lg text-sm">
                         <div className="font-medium text-orange-700 mb-2">Cone & Candy Products</div>
-                        <div className="flex justify-between">
-                          <span>Total Quantity:</span>
-                          <span>{totalCountItems} pcs</span>
+                        <div className="space-y-1">
+                          {/* Itemized breakdown of cone/candy products */}
+                          {cartItems
+                            .filter(item => isCountProduct(item.product.category))
+                            .map((item, index) => (
+                              <div key={index} className="flex justify-between border-b border-orange-100 last:border-b-0 py-1">
+                                <span className="font-medium">{item.product.name}:</span>
+                                <span>
+                                  {item.quantity} × {item.selectedSize.size} pcs
+                                </span>
+                              </div>
+                            ))}
+                            
+                          {/* Summary of total pieces */}
+                          <div className="flex justify-between mt-2 pt-1 text-orange-700 font-medium border-t border-orange-200">
+                            <span>Total Count Items:</span>
+                            <span>
+                              {cartItems
+                                .filter(item => isCountProduct(item.product.category))
+                                .reduce((total, item) => {
+                                  // Parse the size as a number and multiply by quantity
+                                  const sizeNumber = parseInt(item.selectedSize.size);
+                                  return total + (sizeNumber * item.quantity);
+                                }, 0)} pcs
+                            </span>
+                          </div>
                         </div>
                       </div>
                     )}
                   </div>
                   
                   <div className="space-y-3 mb-6">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Total Items</span>
-                      <span>{cartItems.length} items ({cartItems.reduce((total, item) => total + item.quantity, 0)} qty)</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Subtotal</span>
-                      <span className="font-medium">₹ {totalAmount.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Delivery Fee</span>
-                      <span className="font-medium">₹ 0.00</span>
-                    </div>
-                    <div className="border-t border-gray-200 pt-3 flex justify-between">
-                      <span className="font-semibold">Total</span>
-                      <span className="font-bold text-xl">₹ {totalAmount.toFixed(2)}</span>
+                    <div className="p-3 bg-gray-50 rounded-lg">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Total Items</span>
+                        <span>{cartItems.length} items ({cartItems.reduce((total, item) => total + item.quantity, 0)} qty)</span>
+                      </div>
+                      <div className="flex justify-between mt-2 pt-2 border-t border-gray-200">
+                        <span className="text-gray-600">Subtotal</span>
+                        <span className="font-medium">₹ {totalAmount.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between mt-2">
+                        <span className="text-gray-600">Delivery Fee</span>
+                        <span className="font-medium">₹ 0.00</span>
+                      </div>
+                      <div className="mt-2 pt-2 border-t border-gray-300 flex justify-between font-medium">
+                        <span className="font-semibold">Total</span>
+                        <span className="font-bold text-xl">₹ {totalAmount.toFixed(2)}</span>
+                      </div>
                     </div>
                   </div>
                   
