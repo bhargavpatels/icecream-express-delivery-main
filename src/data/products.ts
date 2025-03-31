@@ -1,5 +1,4 @@
-
-import { getProducts, getCategories, getConeCandy } from "@/services/productApi";
+import { getProducts, getCategories, getConeCandy, clearCategoriesCache } from "@/services/productApi";
 import { Product, ProductSize } from "@/types/product";
 
 // Sample data to use if API fails
@@ -902,4 +901,4 @@ export const fallbackCategories = Array.from(
 );
 
 // Export the API functions to be used directly
-export { getProducts, getCategories, getConeCandy };
+export { getProducts, getCategories, getConeCandy, clearCategoriesCache };

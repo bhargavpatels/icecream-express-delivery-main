@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -6,6 +6,13 @@ import ProductCard from '@/components/ProductCard';
 import { getProducts, getCategories, fallbackProducts, fallbackCategories } from '@/data/products';
 import { Product } from '@/types/product';
 import { Search, X } from 'lucide-react';
+
+// Category display mapping
+const categoryDisplayNames: Record<string, string> = {
+  "IceCreame": "Ice Cream",
+  "ConeCandy": "Cone & Candy",
+  "Classic Flavors": "Classic Flavors"
+};
 
 const Products = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -22,16 +29,22 @@ const Products = () => {
   const { data: products = fallbackProducts, isLoading: isLoadingProducts } = useQuery({
     queryKey: ['products'],
     queryFn: getProducts,
+    refetchOnMount: true // Force refetch when component mounts
   });
 
   // Fetch categories using React Query
   const { data: categories = fallbackCategories, isLoading: isLoadingCategories } = useQuery({
     queryKey: ['categories'],
     queryFn: getCategories,
+    refetchOnMount: true // Force refetch when component mounts
   });
 
-  useEffect(() => {
+  // Filter products based on search query and selected category
+  const filterProducts = useCallback(() => {
     if (products) {
+      console.log('Filtering products, count:', products.length);
+      console.log('Categories available:', categories);
+      
       const filtered = products.filter((product) => {
         const matchesQuery = product.name.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesCategory = selectedCategory ? product.category === selectedCategory : true;
@@ -40,7 +53,12 @@ const Products = () => {
       
       setFilteredProducts(filtered);
     }
-  }, [searchQuery, selectedCategory, products]);
+  }, [searchQuery, selectedCategory, products, categories]);
+
+  // Update filtered products when dependencies change
+  useEffect(() => {
+    filterProducts();
+  }, [filterProducts]);
 
   const clearSearch = () => {
     setSearchQuery('');
@@ -89,6 +107,28 @@ const Products = () => {
               
               <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hidden">
                 <button
+                  onClick={() => setSelectedCategory("IceCreame")}
+                  className={`px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium transition-colors ${
+                    selectedCategory === "IceCreame"
+                      ? 'bg-brand-pink text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {categoryDisplayNames["IceCreame"] || "Ice Cream"}
+                </button>
+                
+                <button
+                  onClick={() => setSelectedCategory("ConeCandy")}
+                  className={`px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium transition-colors ${
+                    selectedCategory === "ConeCandy"
+                      ? 'bg-brand-pink text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {categoryDisplayNames["ConeCandy"] || "Cone & Candy"}
+                </button>
+                
+                <button
                   onClick={() => setSelectedCategory(null)}
                   className={`px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium transition-colors ${
                     selectedCategory === null
@@ -99,19 +139,21 @@ const Products = () => {
                   All Categories
                 </button>
                 
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    onClick={() => setSelectedCategory(category)}
-                    className={`px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium transition-colors ${
-                      selectedCategory === category
-                        ? 'bg-brand-pink text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    {category}
-                  </button>
-                ))}
+                {categories
+                  .filter(category => category !== "IceCreame" && category !== "ConeCandy")
+                  .map((category) => (
+                    <button
+                      key={category}
+                      onClick={() => setSelectedCategory(category)}
+                      className={`px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium transition-colors ${
+                        selectedCategory === category
+                          ? 'bg-brand-pink text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {categoryDisplayNames[category] || category}
+                    </button>
+                  ))}
               </div>
             </div>
           </div>

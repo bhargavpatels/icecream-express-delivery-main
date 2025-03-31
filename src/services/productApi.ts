@@ -30,11 +30,13 @@ export interface ApiProductSizeData {
 
 // Transform the API product data to match our app's product interface
 export const transformProductData = (apiProduct: ApiProductData): Product => {
+  const isConeCandy = apiProduct.type === "ConeCandy";
+  
   return {
     id: apiProduct.pid,
     name: apiProduct.title,
     category: apiProduct.type || "Classic Flavors",
-    description: `Delicious ${apiProduct.title} ice cream`,
+    description: `Delicious ${apiProduct.title} ${isConeCandy ? 'treat' : 'ice cream'}`,
     image: apiProduct.image || "/placeholder.svg",
     cover: apiProduct.cover || apiProduct.image,
     sizes: apiProduct.product_data?.map((sizeData: ApiProductSizeData) => ({
@@ -58,8 +60,20 @@ export const getProducts = async (): Promise<Product[]> => {
     const data: ApiResponse<ApiProductData[]> = await response.json();
     console.log("Fetched products from API:", data);
     
+    let products: Product[] = [];
+    
     if (data.code === "200" && data.Data) {
-      return data.Data.map(transformProductData);
+      products = data.Data.map(transformProductData);
+      
+      // Also fetch and include cone candy products
+      try {
+        const candyProducts = await getConeCandy();
+        return [...products, ...candyProducts];
+      } catch (candyError) {
+        console.error("Error fetching cone candy products:", candyError);
+        // If cone candy fetch fails, fallback to sample cone candy data
+        return [...products, ...coneCandyApiResponse.Data.map(transformProductData)];
+      }
     } else {
       throw new Error(data.msg || "Failed to fetch products");
     }
@@ -101,6 +115,12 @@ export const getConeCandy = async (): Promise<Product[]> => {
 // Cache the categories to avoid recalculating
 let cachedCategories: string[] = [];
 
+// Function to clear categories cache
+export const clearCategoriesCache = () => {
+  console.log('Clearing categories cache');
+  cachedCategories = [];
+};
+
 // Extract unique categories from products
 export const getCategories = async (): Promise<string[]> => {
   if (cachedCategories.length > 0) {
@@ -109,7 +129,26 @@ export const getCategories = async (): Promise<string[]> => {
   
   try {
     const products = await getProducts();
+    
+    // Reset the cache
+    cachedCategories = [];
+    
+    // Extract unique categories
     cachedCategories = Array.from(new Set(products.map(product => product.category)));
+    
+    // Ensure categories are sorted with ConeCandy at a specific position
+    if (cachedCategories.includes("ConeCandy")) {
+      // Remove ConeCandy from its current position
+      cachedCategories = cachedCategories.filter(cat => cat !== "ConeCandy");
+      // Add it after "Classic Flavors" if it exists, otherwise at the beginning
+      const classicIndex = cachedCategories.indexOf("Classic Flavors");
+      if (classicIndex !== -1) {
+        cachedCategories.splice(classicIndex + 1, 0, "ConeCandy");
+      } else {
+        cachedCategories.unshift("ConeCandy");
+      }
+    }
+    
     return cachedCategories;
   } catch (error) {
     console.error("Error fetching categories:", error);

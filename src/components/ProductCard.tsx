@@ -16,6 +16,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   // Check if this is a 5 liter product that's eligible for wholesale pricing
   const sizeNum = parseFloat(selectedSize.size);
   const isEligibleForWholesale = sizeNum === 5;
+  
+  // Check if this is a cone candy product
+  const isConeCandy = product.category === "ConeCandy";
+
+  // Format size label based on product type
+  const getSizeLabel = (sizeStr: string) => {
+    if (isConeCandy) {
+      // For cone candy, display the size as "Qty: X"
+      return `Qty: ${sizeStr}`;
+    }
+    return sizeStr;
+  };
 
   // Check if product is already in cart with the currently selected size
   const existingCartItem = cartItems.find(
@@ -54,6 +66,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     if (selectedSize.size === '750 ML' && product.cover) {
       return getImageUrl(product.cover);
     }
+    // For cone candy products, always use the cover image if available
+    if (isConeCandy && product.cover) {
+      return getImageUrl(product.cover);
+    }
     // Otherwise use the default product image
     return getImageUrl(product.image);
   };
@@ -71,6 +87,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             (e.target as HTMLImageElement).src = "/placeholder.svg";
           }}
         />
+       
       </div>
       
       <div className="p-4">
@@ -93,7 +110,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              {size.size}
+              {getSizeLabel(size.size)}
             </button>
           ))}
         </div>
@@ -103,7 +120,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <div className="flex items-center justify-between h-6">
             <div className="text-sm font-medium text-gray-500">
               MRP: <span className="text-teal-600">₹ {selectedSize.mrp || selectedSize.price}</span>
-              {isEligibleForWholesale && selectedSize.mrp && selectedSize.mrp !== selectedSize.price && (
+              {!isConeCandy && isEligibleForWholesale && selectedSize.mrp && selectedSize.mrp !== selectedSize.price && (
                 <span className="ml-2 text-xs text-brand-pink">(₹ {selectedSize.price} wholesale)</span>
               )}
             </div>

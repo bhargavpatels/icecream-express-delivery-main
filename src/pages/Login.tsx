@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { navigateBack } from '@/utils/navigationUtils';
-import { testApiConnection } from '@/services/authService';
+
 
 const Login = () => {
   const [identifier, setIdentifier] = useState('');
@@ -144,6 +144,8 @@ const Login = () => {
                   'Login'
                 )}
               </button>
+              
+              
             </form>
           </div>
         </div>
