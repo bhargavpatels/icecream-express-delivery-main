@@ -302,13 +302,29 @@ const Cart = () => {
                   <div className="flex items-center mb-4 p-3 bg-blue-50 rounded-lg text-sm">
                     <Info size={16} className="text-blue-500 mr-2 flex-shrink-0" />
                     <div>
-                      <span className="font-medium">Total Volume: {totalVolume.toFixed(1)} liters</span>
-                      <div className="text-xs mt-1">5L Products Volume: {fiveLiterVolume.toFixed(1)} liters</div>
+                      <div className="font-medium mb-1">Order Details</div>
+                      <div className="flex flex-col space-y-1">
+                        <div className="flex justify-between">
+                          <span>Volume Products:</span>
+                          <span>{totalVolume.toFixed(1)} liters</span>
+                        </div>
+                        {totalCountItems > 0 && (
+                          <div className="flex justify-between">
+                            <span>Count Products:</span>
+                            <span>{totalCountItems} pcs</span>
+                          </div>
+                        )}
+                        <div className="flex justify-between">
+                          <span>5L Products:</span>
+                          <span>{fiveLiterVolume.toFixed(1)} liters</span>
+                        </div>
+                      </div>
+                      
                       {isWholesale && (
-                        <p className="text-green-600 mt-1">✓ Wholesale pricing applied to 5L products (10+ liters)</p>
+                        <p className="text-green-600 mt-2 text-xs">✓ Wholesale pricing applied to 5L products (10+ liters)</p>
                       )}
-                      {!isWholesale && (
-                        <p className="mt-1">Add {(10 - fiveLiterVolume).toFixed(1)} more liters of 5L products for wholesale prices</p>
+                      {!isWholesale && fiveLiterVolume > 0 && (
+                        <p className="mt-2 text-xs">Add {(10 - fiveLiterVolume).toFixed(1)} more liters of 5L products for wholesale prices</p>
                       )}
                     </div>
                   </div>
@@ -318,10 +334,12 @@ const Cart = () => {
                       <span className="text-gray-600">Total Items</span>
                       <span>{cartItems.length} items ({cartItems.reduce((total, item) => total + item.quantity, 0)} qty)</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Total Count Items</span>
-                      <span>{totalCountItems} pcs</span>
-                    </div>
+                    {totalCountItems > 0 && (
+                      <div className="flex justify-between bg-yellow-50 p-2 rounded">
+                        <span className="text-gray-600">Count Products</span>
+                        <span>{totalCountItems} pcs</span>
+                      </div>
+                    )}
                     <div className="flex justify-between">
                       <span className="text-gray-600">Subtotal</span>
                       <span className="font-medium">₹ {totalAmount.toFixed(2)}</span>
