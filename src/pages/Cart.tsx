@@ -326,7 +326,7 @@ const Cart = () => {
                             ))}
                             
                           {/* Summary of ice cream volumes */}
-                          <div className="flex justify-between mt-2 pt-1 border-t border-blue-200">
+                          <div className="flex justify-between mt-2 pt-1 text-blue-700 font-medium border-t border-blue-200">
                             <span>Total Volume:</span>
                             <span>{totalVolume.toFixed(1)} liters</span>
                           </div>
