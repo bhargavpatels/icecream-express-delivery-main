@@ -23,29 +23,34 @@ const Footer: React.FC = () => {
             
             <div className="mt-4">
               <h3 className="text-lg font-semibold mb-3">Download Our App</h3>
-              <div className="flex flex-col space-y-2">
+              <div className="flex flex-row space-x-3">
                 <a 
-                  href="https://play.google.com/store/apps/details?id=com.order.bombaychowpati" 
+                  href="https://apps.apple.com/app/bombaychowpati/id6560114187"
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-2 bg-gray-800 text-white px-3 py-2 rounded-md hover:bg-gray-700 transition-colors"
+                  className="flex items-center gap-2 bg-[#FF4B81] text-white px-6 py-3 rounded-xl hover:opacity-90 transition-opacity"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
-                    <path d="m5 3 14 9-14 9V3z"></path>
+                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
                   </svg>
-                  <span className="text-sm font-medium">Google Play</span>
+                  <div className="flex flex-col items-start">
+                    <span className="text-xs text-white/80">Download now</span>
+                    <span className="text-sm font-medium">App Store</span>
+                  </div>
                 </a>
                 <a 
-                  href="https://apps.apple.com/app/bombaychowpati/id6560114187" 
+                  href="https://play.google.com/store/apps/details?id=com.order.bombaychowpati"
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex items-center space-x-2 bg-gray-800 text-white px-3 py-2 rounded-md hover:bg-gray-700 transition-colors"
+                  className="flex items-center gap-2 bg-[#FF4B81] text-white px-6 py-3 rounded-xl hover:opacity-90 transition-opacity"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
-                    <path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"></path>
-                    <path d="M10 2c1 .5 2 2 2 5"></path>
+                  <svg className="w-6 h-6" viewBox="0 0 512 512" fill="currentColor">
+                    <path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/>
                   </svg>
-                  <span className="text-sm font-medium">App Store</span>
+                  <div className="flex flex-col items-start">
+                    <span className="text-xs text-white/80">Download now</span>
+                    <span className="text-sm font-medium">Play Store</span>
+                  </div>
                 </a>
               </div>
             </div>
@@ -111,3 +116,8 @@ const Footer: React.FC = () => {
 };
 
 export default Footer;
+
+
+
+
+

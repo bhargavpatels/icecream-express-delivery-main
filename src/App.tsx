@@ -24,6 +24,7 @@ import EditAddress from "./pages/settings/EditAddress";
 import DeleteAccount from "./pages/settings/DeleteAccount";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsConditions from "./pages/TermsConditions";
+import ScrollToTop from '@/components/ScrollToTop';
 
 // Configure React Query client with reasonable defaults
 const queryClient = new QueryClient({
@@ -41,9 +42,10 @@ const App = () => (
     <TooltipProvider>
       <UserProvider>
         <CartProvider>
-          <Toaster />
-          <Sonner />
           <BrowserRouter>
+            <ScrollToTop />
+            <Toaster />
+            <Sonner />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/products" element={<Products />} />
@@ -80,3 +82,4 @@ const App = () => (
 );
 
 export default App;
+

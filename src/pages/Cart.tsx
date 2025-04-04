@@ -32,6 +32,10 @@ const Cart = () => {
   const [mobileError, setMobileError] = useState("");
   const navigate = useNavigate();
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   // Helper function to check if a product is a count-based item
   const isCountProduct = (category: string): boolean => {
     return ['cone', 'candy', 'stick', 'cup', 'ConeCandy'].includes(category.toLowerCase() === 'conecandy' ? category : category.toLowerCase());
@@ -631,3 +635,4 @@ const Cart = () => {
 };
 
 export default Cart;
+
