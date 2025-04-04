@@ -17,9 +17,9 @@ const Index = () => {
       <section className="relative h-screen bg-gradient-to-b from-blue-50 to-white overflow-hidden">
         <div className="container mx-auto px-4 h-full flex flex-col items-center justify-center relative z-10">
           <div className="w-full max-w-3xl mx-auto text-center">
-            <div className="mb-8 animate-fade-in">
+            <div className="mb-8 animate-fade-in delay-100">
               <img
-                src="/lovable-uploads/splash_image.png"
+                src="/lovable-uploads/splash_image.png  "
                 alt="Bombay Chowpati Ice Cream"
                 className="w-full max-w-md mx-auto"
               />
